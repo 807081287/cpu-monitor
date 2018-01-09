@@ -8,7 +8,6 @@ import java.io.Serializable;
  * com.gsww.jup.entity
  *
  * @author xiaoyy
- * @TODO
  * @Date 2017-12-28 上午9:27
  * The word 'impossible' is not in my dictionary.
  */
@@ -21,6 +20,7 @@ public class SysServerLog implements Serializable {
     private String cpu;
     private String memory;
     private String disk;
+    private String diskIo;
     private String net;
     private String createTime;
 
@@ -95,4 +95,12 @@ public class SysServerLog implements Serializable {
         return this;
     }
 
+    @Column(name = "DISK_IO")
+    public String getDiskIo() {
+        return diskIo;
+    }
+    public SysServerLog setDiskIo(String diskIo) {
+        this.diskIo = diskIo;
+        return this;
+    }
 }

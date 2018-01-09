@@ -49,13 +49,15 @@ public class CpuController {
 
         float memoryUsage = sysServerLogService.memoryUsage();
         float diskIoUsage = sysServerLogService.diskIOUsage();
+        double diskUsage = sysServerLogService.diskUsage();
         float netUsage = sysServerLogService.netUsage();
         try {
             sysServerLog.setSysServerLogId(Dbid.getID());
             sysServerLog.setServerIp(ComputerInfo.getLinuxLocalIp());
             sysServerLog.setCpu(String.valueOf(decimalFormat.format(cpuUsage)));
             sysServerLog.setMemory(String.valueOf(decimalFormat.format(memoryUsage)));
-            sysServerLog.setDisk(String.valueOf(decimalFormat.format(diskIoUsage)));
+            sysServerLog.setDisk(String.valueOf(decimalFormat.format(diskUsage)));
+            sysServerLog.setDiskIo(String.valueOf(decimalFormat.format(diskIoUsage)));
             sysServerLog.setNet(String.valueOf(decimalFormat.format(netUsage)));
             sysServerLog.setCreateTime(TimeHelper.getCurrentTime());
             sysServerLogService.save(sysServerLog);

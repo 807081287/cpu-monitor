@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
+import java.math.BigDecimal;
 
 /**
  * SysServerLogServiceImpl
@@ -269,5 +270,66 @@ public class SysServerLogServiceImpl implements SysServerLogService {
             logger.error(sw.toString());
         }
         return netUsage;
+    }
+
+    /**
+     * @Description Linux得到磁盘的使用率
+     * @author Xander
+     * @Date 2018/1/9 下午5:30
+     * @see com.gsww.service.impl
+     * The word 'impossible' is not in my dictionary.
+     */
+    @Override
+    public double diskUsage() {
+        double totalHD = 0;
+        double usedHD = 0;
+        // df -hl 查看硬盘空间
+        String command = "df -hl";
+        Runtime rt = Runtime.getRuntime();
+        Process p;
+        BufferedReader in = null;
+        try {
+            p = rt.exec(command);
+            in = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            String str = null;
+            String[] strArray = null;
+            while ((str = in.readLine()) != null) {
+                int m = 0;
+                strArray = str.split(" ");
+                for (String tmp : strArray) {
+                    if (tmp.trim().length() == 0)
+                        continue;
+                    ++m;
+                    if (tmp.indexOf("G") != -1) {
+                        if (m == 2) {
+                            if (!tmp.equals("") && !tmp.equals("0"))
+                                totalHD += Double.parseDouble(tmp.substring(0, tmp.length() - 1)) * 1024;
+                        }
+                        if (m == 3) {
+                            if (!tmp.equals("none") && !tmp.equals("0"))
+                                usedHD += Double.parseDouble(tmp.substring(0, tmp.length() - 1)) * 1024;
+                        }
+                    }
+                    if (tmp.indexOf("M") != -1) {
+                        if (m == 2) {
+                            if (!tmp.equals("") && !tmp.equals("0"))
+                                totalHD += Double.parseDouble(tmp.substring(0, tmp.length() - 1));
+                        }
+                        if (m == 3) {
+                            if (!tmp.equals("none") && !tmp.equals("0"))
+                                usedHD += Double.parseDouble(tmp.substring(0, tmp.length() - 1));
+                        }
+                    }
+                }
+            }
+            in.close();
+        } catch (Exception e) {
+            logger.debug(e);
+        }
+        // 保留2位小数
+        double precent = (usedHD / totalHD);
+        BigDecimal b1 = new BigDecimal(precent);
+        precent = b1.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        return precent;
     }
 }

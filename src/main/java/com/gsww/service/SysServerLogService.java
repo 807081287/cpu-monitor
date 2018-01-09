@@ -14,4 +14,6 @@ public interface SysServerLogService {
 
 	float netUsage();
 
+	double diskUsage();
+
 }
